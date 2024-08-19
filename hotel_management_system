@@ -1,0 +1,1157 @@
+
+
+#include<iostream>
+#include<fstream>
+#include<stdio.h>
+#include<string.h>
+#include<cstring>
+#include<iomanip>
+// #include<conio.h>
+#include<unistd.h>
+// #include<windows.h>
+// #include<bits/stdc++.h>
+
+
+
+using namespace std;
+
+int order();
+
+class HOTEL
+{
+private:
+    int room_no;
+    char name[30];
+    char address[50];
+    char phone[15];
+    long days;
+    long cost;
+    char rtype[30];
+    long pay;
+    void breakfast(int);        //to assign price of breakfast
+    void lunch(int);            //to assign price of lunch
+    void dinner(int);           //to assign price of dinner
+
+public:
+    void main_menu();	 	  //to dispay the main menu
+    void add();			  //to book a room
+    void display(); 		  //to display the specific customer information
+    void rooms();			  //to display alloted rooms
+    void edit();			  //to edit the customer by calling modify or delete
+    int check(int);		  //to check room status
+    void modify();		  //to modify the customer information
+    void delete_rec();              //to check out the customer
+    void restaurant();	          //to order food from restaurant
+    void modify_name(int);          //to modify name of guest
+    void modify_address(int);       //to modify address of guest
+    void modify_phone(int);         //to modify phone number of guest
+    void modify_days(int);          //to modify days of stay of guest
+} h;
+
+void HOTEL::main_menu()
+{
+vasu:
+    int choice;
+    while(choice==1||2||3||4||5||6)
+    {
+        system("cls");
+        cout<<"\n\t\t\t\t___________________________________";
+        cout<<"\n\t\t\t\t|                                 |";
+        cout<<"\n\t\t\t\t|       ROYAL OBEROI PALACE       |";
+        cout<<"\n\t\t\t\t|_________________________________|";
+        cout<<"\n\t\t\t\t|                                 |";
+        cout<<"\n\t\t\t\t|            MAIN MENU            |";
+        cout<<"\n\t\t\t\t|_________________________________|";
+        cout<<"\n\t\t\t\t|                                 |";
+        cout<<"\n\t\t\t\t|   1. BOOK A ROOM                |";
+        cout<<"\n\t\t\t\t|   2. CUSTOMER DETAILS           |";
+        cout<<"\n\t\t\t\t|   3. ALLOTED ROOM DETAILS       |";
+        cout<<"\n\t\t\t\t|   4. EDIT CUSTOMER DETAILS      |";
+        cout<<"\n\t\t\t\t|   5. ORDER FOOD FROM RESTAURANT |";
+        cout<<"\n\t\t\t\t|   6. EXIT                       |";
+        cout<<"\n\t\t\t\t|_________________________________|";
+        cout<<"\n\n\n\t\t\t\t   ENTER YOUR CHOICE: ";
+        cin>>choice;
+        switch(choice)
+        {
+        case 1:
+            add();
+            break;
+        case 2:
+            display();
+            break;
+        case 3:
+            rooms();
+            break;
+        case 4:
+            edit();
+            break;
+        case 5:
+            restaurant();
+            break;
+        case 6:
+            cout<<"\n\t\t\t\t   ";
+            system("pause");
+            system("cls");
+            exit(0);
+            return;
+        default:
+        {
+            cout<<"\n\n\t\t\t\t   INVALID CHOICE.";
+            cout<<"\n\t\t\t\t   ";
+            system("pause");
+            system("cls");
+            // goto vasu;
+        }
+        }
+    }
+}
+
+void HOTEL::add()
+{
+bk:
+    system("cls");
+    int r,flag;
+    ofstream fout("Record.DAT",ios::app|ios::binary);
+
+    cout<<"\n\t\t\t _________________________";
+    cout<<"\n\t\t\t |        |              |";
+    cout<<"\n\t\t\t | ROOMS  |   ROOM TYPE  |";
+    cout<<"\n\t\t\t |________|______________|";
+    cout<<"\n\t\t\t |        |              |";
+    cout<<"\n\t\t\t | 01-50  |    DELUXE    |";
+    cout<<"\n\t\t\t | 51-80  |   EXECUTIVE  |";
+    cout<<"\n\t\t\t | 81-100 | PRESIDENTIAL |";
+    cout<<"\n\t\t\t |________|______________|";
+    cout<<"\n\n ENTER CUSTOMER DETAILS";
+    cout<<"\n\n ENTER ROOM NUMBER: ";
+    cin>>r;
+    flag=check(r);
+    if(flag==3){
+        cout<<"\n INVALID CHOICE";
+        cout<<"\n\n ";
+        system("pause");
+        goto bk;
+
+    }
+    if(flag==1){
+        cout<<"\n  ROOM IS ALREADY BOOKED.\n";}
+    else
+    {
+        if(flag==2)
+            cout<<"\n SORRY, ROOM DOES NOT EXIST.\n";
+        else
+        {
+            room_no=r;
+            cout<<" NAME: ";
+            cin>>name;
+            cout<<" ADDRESS: ";
+            cin>>address;
+            cout<<" PHONE NUMBER: ";
+            cin>>phone;
+            cout<<" NUMBER OF DAYS: ";
+            cin>>days;
+            if(room_no>=1&&room_no<=50)
+            {
+                strcpy(rtype,"DELUXE");
+                cost=days*10000;
+            }
+            else
+            {
+                if(room_no>=51&&room_no<=80)
+                {
+                    strcpy(rtype,"EXECUTIVE");
+                    cost=days*25000;
+                }
+                else
+                {
+                    if(room_no>=81 && room_no<=100)
+                    {
+                        strcpy(rtype,"PRESIDENTIAL");
+                        cost=days*50000;
+                    }
+                }
+            }
+            fout.write((char*)this, sizeof(HOTEL));
+            cout<<"\n ROOM HAS BEEN BOOKED SUCCESSFULLY.\n";
+        }
+    getchar();
+    fout.close();
+    }
+    cout<<" ";system("pause");
+    fout.close();
+}
+
+
+void HOTEL::display()
+{
+    system("cls");
+    ifstream fin("Record.DAT",ios::in|ios::binary);
+    int r,flag;
+    cout<<"\n ENTER ROOM NUMBER: ";
+    cin>>r;
+    while(fin.read((char*)this,sizeof(HOTEL)))
+    {
+        if(room_no==r)
+        {
+            system("cls");
+            cout<<"\n CUSTOMER DETAILS";
+            cout<<"\n ________________";
+            cout<<"\n\n ROOM NUMBER: "<<room_no;
+            cout<<"\n NAME: "<<name;
+            cout<<"\n ADDRESS: "<<address;
+            cout<<"\n PHONE NUMBER: "<<phone;
+            cout<<"\n STAYING FOR "<<days<<" DAYS.";
+            cout<<"\n ROOM TYPE: "<<rtype;
+            cout<<"\n TOTAL COST OF STAY: "<<cost;
+            flag=1;
+            break;
+        }
+    }
+    if(flag==0)
+        cout<<"\n ROOM IS VACANT.";
+        cout<<"\n\n ";
+    system("pause");
+    fin.close();
+
+}
+
+
+void HOTEL::rooms()
+{
+    system("cls");
+    const char separator=' ';
+    const int NoWidth=8;
+    const int GuestWidth=17;
+    const int AddressWidth=16;
+    const int RoomWidth=13;
+    const int ContactNoWidth=13;
+    ifstream fin("Record.DAT",ios::in|ios::binary);
+    cout<<"\n\t\t\t    LIST OF ROOMS ALLOTED";
+    cout<<"\n\t\t\t   _______________________";
+    cout<<"\n\n _______________________________________________________________________________";
+    cout<<"\n |          |                  |                 |              |              |";
+    cout<<"\n | ROOM NO. |    GUEST NAME    |      ADDRESS    |   ROOM TYPE  |  CONTACT NO. |";
+    cout<<"\n |__________|__________________|_________________|______________|______________|";
+    cout<<"\n |          |                  |                 |              |              |";
+    while(fin.read((char*)this,sizeof(HOTEL)))
+    {
+        cout<<"\n |"<<setw(NoWidth)<<setfill(separator)<<room_no<<"  |";
+        cout<<setw(GuestWidth)<<setfill(separator)<<name<<" |";
+        cout<<setw(AddressWidth)<<setfill(separator)<<address<<" |";
+        cout<<setw(RoomWidth)<<setfill(separator)<<rtype<<" |";
+        cout<<setw(ContactNoWidth)<<setfill(separator)<<phone<<" |";
+    }
+    cout<<"\n |__________|__________________|_________________|______________|______________|\n\n ";
+
+    system("pause");
+    fin.close();
+}
+
+void HOTEL::edit()
+{
+    system("cls");
+    int choice,r;
+    cout<<"\n EDIT MENU";
+    cout<<"\n _________";
+    cout<<"\n\n 1. MODIFY CUSTOMER INFORMATION.";
+    cout<<"\n 2. CUSTOMER CHECK OUT.";
+    cout<<"\n\n ENTER YOUR CHOICE: ";
+    cin>>choice;
+    system("cls");
+    switch(choice)
+    {
+    case 1:
+        modify();
+        break;
+    case 2:
+        delete_rec();
+        break;
+    default:
+        cout<<"\n INVALID CHOICE.";
+        break;
+    }
+    cout<<"\n Press any key to continue.";
+    getchar();
+}
+
+
+int HOTEL::check(int r)
+{
+    int flag=0;
+    ifstream fin("Record.DAT",ios::in|ios::binary);
+    while(fin.read((char*)this,sizeof(HOTEL)))
+    {
+        if(r<=0)
+        {
+            flag=3;
+            break;
+        }
+        if(room_no==r)
+        {
+            flag=1;
+            break;
+        }
+        else
+        {
+            if(r>100)
+            {
+                flag=2;
+                break;
+            }
+        }
+    }
+    fin.close();
+    return(flag);
+}
+
+
+void HOTEL::modify()
+{
+    system("cls");
+    int ch,r;
+    cout<<"\n MODIFY MENU";
+    cout<<"\n ___________";
+    cout<<"\n\n\n 1. MODIFY NAME";
+    cout<<"\n 2. MODIFY ADDRESS";
+    cout<<"\n 3. MODIFY PHONE NUMBER";
+    cout<<"\n 4. MODIFY NUMBER OF DAYS OF STAY";
+    cout<<"\n\n ENTER YOUR CHOICE: ";
+    cin>>ch;
+    system("cls");
+    cout<<"\n ENTER ROOM NUMBER: ";
+    cin>>r;
+    switch(ch)
+    {
+    case 1:
+        modify_name(r);
+        break;
+    case 2:
+        modify_address(r);
+        break;
+    case 3:
+        modify_phone(r);
+        break;
+    case 4:
+        modify_days(r);
+        break;
+    default:
+        cout<<"\n INVALID CHOICE";
+        getchar();
+        break;
+    }
+}
+
+void HOTEL::modify_name(int r)
+{
+    long pos,flag=0;
+    fstream file("Record.DAT",ios::in|ios::out|ios::binary);
+    while(!file.eof())
+    {
+        pos=file.tellg();
+        file.read((char*)this,sizeof(HOTEL));
+        if(room_no==r)
+        {
+            cout<<"\n ENTER NEW NAME: ";
+            cin>>name;
+            file.seekg(pos);
+            file.write((char*)this,sizeof(HOTEL));
+            cout<<"\n\n NAME HAS BEEN MODIFIED SUCCESSFULLY.";
+            flag=1;
+            break;
+        }
+    }
+    if(flag==0)
+        cout<<"\n\n SORRY, ROOM IS VACANT.";
+    getchar();
+    file.close();
+}
+
+void HOTEL::modify_address(int r)
+{
+    long pos,flag=0;
+    fstream file("Record.DAT",ios::in|ios::out|ios::binary);
+    while(!file.eof())
+    {
+        pos=file.tellg();
+        file.read((char*)this,sizeof(HOTEL));
+        if(room_no==r)
+        {
+            cout<<"\n ENTER NEW ADDRESS: ";
+            cin>>address;
+            file.seekg(pos);
+            file.write((char*)this,sizeof(HOTEL));
+            cout<<"\n\n ADDRESS HAS BEEN MODIFIED SUCCESSFULLY.";
+            flag=1;
+            break;
+        }
+    }
+    if(flag==0)
+        cout<<"\n SORRY, ROOM IS VACANT.";
+    getchar();
+    file.close();
+}
+
+void HOTEL::modify_phone(int r)
+{
+    long pos,flag=0;
+    fstream file("Record.DAT",ios::in|ios::out|ios::binary);
+    while(!file.eof())
+    {
+        pos=file.tellg();
+        file.read((char*)this,sizeof(HOTEL));
+        if(room_no==r)
+        {
+            cout<<"\n ENTER NEW PHONE NUMBER: ";
+            cin>>phone;
+            file.seekg(pos);
+            file.write((char*)this,sizeof(HOTEL));
+            cout<<"\n\n PHONE NUMBER HAS BEEN MODIFIED SUCCESSFULLY.";
+            flag=1;
+            break;
+        }
+    }
+    if(flag==0)
+        cout<<"\n SORRY, ROOM IS VACANT.";
+    getchar();
+    file.close();
+}
+
+void HOTEL::modify_days(int r)
+{
+    long pos,flag=0;
+    fstream file("Record.DAT",ios::in|ios::out|ios::binary);
+    while(!file.eof())
+    {
+        pos=file.tellg();
+        file.read((char*)this,sizeof(HOTEL));
+        if(room_no==r)
+        {
+            cout<<" ENTER NEW NUMBER OF DAYS OF STAY: ";
+            cin>>days;
+            if(room_no>=1&&room_no<=50)
+            {
+                strcpy(rtype,"DELUXE");
+                cost=days*10000;
+            }
+            else
+            {
+                if(room_no>=51&&room_no<=80)
+                {
+                    strcpy(rtype,"EXECUTIVE");
+                    cost=days*12500;
+                }
+                else
+                {
+                    if(room_no>=81&&room_no<=100)
+                    {
+                        strcpy(rtype,"PRESIDENTIAL");
+                        cost=days*15000;
+                    }
+                }
+            }
+            file.seekg(pos);
+            file.write((char*)this,sizeof(HOTEL));
+            cout<<"\n\n INFORMATION HAS BEEN MODIFIED SUCCESSFULLY.";
+            flag=1;
+            break;
+        }
+    }
+    if(flag==0)
+        cout<<"\n SORRY, ROOM IS VACANT.";
+    getchar();
+    file.close();
+}
+
+void HOTEL::delete_rec()
+{
+    int r,flag=0;
+    char ch;
+    cout<<"\n ENTER ROOM NUMBER: ";
+    cin>>r;
+    ifstream fin("Record.DAT",ios::in|ios::binary);
+    ofstream fout("temp.DAT",ios::out|ios::binary);
+    while(fin.read((char*)this,sizeof(HOTEL)))
+    {
+        if(room_no==r)
+        {
+            cout<<"\n NAME: "<<name;
+            cout<<"\n ADDRESS: "<<address;
+            cout<<"\n PHONE NUMBER: "<<phone;
+            cout<<"\n ROOM TYPE: "<<rtype;
+            cout<<"\n YOUR TOTAL BILL IS: Rs. "<<cost;
+            cout<<"\n\n DO YOU WANT TO CHECK OUT(Y/N): ";
+            cin>>ch;
+            if(ch=='N')
+                fout.write((char*)this,sizeof(HOTEL));
+            else
+                cout<<"\n\n CUSTOMER CHECKED OUT SUCCESSFULLY.";
+            flag=1;
+        }
+        else
+            fout.write((char*)this,sizeof(HOTEL));
+    }
+    fin.close();
+    fout.close();
+    if(flag==0)
+        cout<<"\n SORRY, ROOM IS VACANT.";
+    else
+    {
+        remove("Record.dat");
+        rename("temp.dat","Record.dat");
+    }
+    getchar();
+}
+
+
+void HOTEL::restaurant()
+{
+    system("cls");
+    int r,ch,num;
+he:
+    cout<<"\n__________________________";
+    cout<<"\n|                        | ";
+    cout<<"\n|       FOOD MENU        |";
+    cout<<"\n|________________________| ";
+    cout<<"\n|                        | ";
+    cout<<"\n|   1. ORDER BREAKFAST   |";
+    cout<<"\n|   2. ORDER LUNCH       |";
+    cout<<"\n|   3. ORDER DINNER      |";
+    cout<<"\n|________________________| ";
+    cout<<"\n\n ENTER YOUR CHOICE: ";
+    cin>>ch;
+    system("cls");
+
+    if(ch>3 || ch<=0)
+    {
+        cout<<"SORRY, NOT A VALID CHOICE."<<endl;
+        cout<<"\n";
+        system("pause");
+        system("cls");
+        goto he;
+
+    }
+    else{
+    cout<<" ENTER ROOM NUMBER: ";
+    cin>>r;
+    switch(ch)
+    {
+    case 1:
+        breakfast(r);
+        break;
+
+    case 2:
+        lunch(r);
+        break;
+
+    case 3:
+        dinner(r);
+        break;
+    }
+    }
+    cout<<"\n\n ";
+    system("pause");
+
+    return;
+}
+
+void HOTEL::breakfast(int r)
+{
+    int num,flag=0;
+    long pos;
+    fstream file("Record.DAT",ios::in|ios::out|ios::binary);
+    while(!file.eof())
+    {
+        pos=file.tellg();
+        file.read((char*)this,sizeof(HOTEL));
+        if(room_no==r)
+        {
+            pay=order();
+            cost=cost+pay;
+            file.seekg(pos);
+            file.write((char*)this,sizeof(HOTEL));
+            cout<<"\n AMOUNT ADDED TO THE BILL: Rs. "<<pay;
+            flag=1;
+            break;
+        }
+    }
+    if(flag==0)
+        cout<<"\n SORRY, ROOM IS VACANT.";
+    getchar();
+    file.close();
+}
+
+
+void HOTEL::lunch(int r)
+{
+    int num,flag=0;
+    long pos;
+    fstream file("Record.DAT",ios::in|ios::out|ios::binary);
+    while(!file.eof())
+    {
+        pos=file.tellg();
+        file.read((char*)this,sizeof(HOTEL));
+        if(room_no==r)
+        {
+            pay=order();
+            cost=cost+pay;
+            file.seekg(pos);
+            file.write((char*)this,sizeof(HOTEL));
+            cout<<"\n AMOUNT ADDED TO THE BILL: Rs. "<<pay;
+            flag=1;
+            break;
+        }
+    }
+    if(flag==0)
+        cout<<"\n SORRY, ROOM IS VACANT.";
+    getchar();
+    file.close();
+}
+
+
+void HOTEL::dinner(int r)
+{
+    int num,flag=0;
+    long pos;
+    fstream file("Record.DAT",ios::in|ios::out|ios::binary);
+    while(!file.eof())
+    {
+        pos=file.tellg();
+        file.read((char*)this,sizeof(HOTEL));
+        if(room_no==r)
+        {
+            pay=order();
+            cost=cost+pay;
+            file.seekg(pos);
+            file.write((char*)this,sizeof(HOTEL));
+            cout<<"\n AMOUNT ADDED TO THE BILL: Rs. "<<pay;
+            flag=1;
+            break;
+        }
+    }
+    if(flag==0)
+        cout<<"\n SORRY, ROOM IS VACANT.";
+    getchar();
+    file.close();
+}
+
+
+int main()
+{
+    system("color B");
+    cout<<"\t\t\t_______________________________________\n";
+    cout<<"\t\t\t|                                     |\n";
+    cout<<"\t\t\t|       HOTEL MANAGEMENT SYSTEM       |\n";
+    cout<<"\t\t\t|_____________________________________|\n";
+    cout<<"\t\t\t|                                     |\n";
+    cout<<"\t\t\t|      PROJECT DEVELOPED BY:          |\n";
+    cout<<"\t\t\t|                                     |\n";
+    cout<<"\t\t\t|      VANSH AGARWAL  22103105    B4  |\n";
+    cout<<"\t\t\t|      KUMAR UTKARSH  22103099    B4  |\n";
+    cout<<"\t\t\t|      VASU JAIN      22103096    B4  |\n";
+    cout<<"\t\t\t|_____________________________________|\n\n\n";
+    cout<<"\t\t\t  Press any key to continue...      ";
+    int ch = cin.get();
+    system("cls");
+    h.main_menu();
+    
+    
+    return 0;
+}
+
+class one
+{
+public:
+    void menu1();
+};
+
+void one::menu1()
+// Menu
+{
+
+    cout<<"\n\n\n\t\t\t\t\t\t\t\t\t___________________________________________________________________"<<endl;
+    cout<<"\t\t\t\t\t\t\t\t\t|                                                                 |"<<endl;
+    cout<<"\t\t\t\t\t\t\t\t\t|                            ORDER MENU                           |"<<endl;
+    cout<<"\t\t\t\t\t\t\t\t\t|_________________________________________________________________|"<<endl;
+    cout<<"\t\t\t\t\t\t\t\t\t|                                                                 |"<<endl;
+    cout<<"\t\t\t\t\t\t\t\t\t|      1.   Veggie Supreme                   Rs.480               |"<<endl;
+    cout<<"\t\t\t\t\t\t\t\t\t|      2.   Exotica Pizza                    Rs.440               |"<<endl;
+    cout<<"\t\t\t\t\t\t\t\t\t|      3.   Chicken Sizzler                  Rs.580               |"<<endl;
+    cout<<"\t\t\t\t\t\t\t\t\t|      4.   Chrispy Chicken                  Rs.520               |"<<endl;
+    cout<<"\t\t\t\t\t\t\t\t\t|      5.   Sphaghetti                       Rs.350               |"<<endl;
+    cout<<"\t\t\t\t\t\t\t\t\t|      6.   Country Feast                    Rs.400               |"<<endl;
+    cout<<"\t\t\t\t\t\t\t\t\t|      7.   Tetrazzini                       Rs.420               |"<<endl;
+    cout<<"\t\t\t\t\t\t\t\t\t|      8.   Double Cheese                    Rs.540               |"<<endl;
+    cout<<"\t\t\t\t\t\t\t\t\t|      9.   Makizushi                        Rs.548               |"<<endl;
+    cout<<"\t\t\t\t\t\t\t\t\t|      10.  Ham Burger                       Rs.390               |"<<endl;
+    cout<<"\t\t\t\t\t\t\t\t\t|      11.  Margherita Pizza                 Rs.525               |"<<endl;
+    cout<<"\t\t\t\t\t\t\t\t\t|      12.  Fish 'n' Chips                   Rs.425               |"<<endl;
+    cout<<"\t\t\t\t\t\t\t\t\t|      13.  Fajitas                          Rs.335               |"<<endl;
+    cout<<"\t\t\t\t\t\t\t\t\t|      14.  Tempura                          Rs.324               |"<<endl;
+    cout<<"\t\t\t\t\t\t\t\t\t|      15.  Hot Dog                          Rs.360               |"<<endl;
+    cout<<"\t\t\t\t\t\t\t\t\t|      16.  EXIT                                                  |"<<endl;
+    cout<<"\t\t\t\t\t\t\t\t\t|_________________________________________________________________|"<<endl;
+}
+
+class two:public one
+{
+protected:
+    int  pizza=0;
+    int ch=0;
+    int a=0;
+    int b=0;
+    int c=0;
+    int d=0;
+    int e=0;
+    int f=0;
+    int g=0;
+    int h=0;
+    int i=0;
+    int j=0;
+    int k=0;
+    int l=0;
+    int m=0;
+    int n=0;
+    int o=0;
+    int p=0;
+    int q=0;
+    int r=0;
+    int s=0;
+    string y;
+    string ye;
+public:
+    int menu2()
+
+//writing in file
+
+    {
+        ofstream write;
+        write.open("order.text");
+        if(!write)
+        {
+            cout<<"SORRY, FILE CANNOT BE OPENED"<<endl;
+            exit (-1);
+        }
+
+a:
+b:
+c:
+        
+        cout<<"\n\n\tENTER YOUR ORDER (ONE ORDER AT A TIME): ";
+        cin>>ch;
+
+        if(ch<=15){
+        cout<<"\n\tDO YOU WANT TO UPDATE YOUR ORDER (Y/N) : ";
+
+        cin>>ye;
+
+        if(ye=="y"|| ye=="Y")
+        {
+            goto b;
+        }
+        if(ye=="n" || ye=="N")
+        {
+            switch(ch)
+            {
+
+            // taking input for pizza
+
+            case 1:
+                cout<<"\n\tHOW MANY PIZZA YOU WANT ?  ";
+                cin>>pizza;
+
+                a=480;
+                s=s+a*pizza;
+                write<<"YOU ORDER  Veggie Supreme : 480";
+                write<<" \n";
+                write<<"NUMBER OF PIZZA IS : "<<pizza;
+                write<<"\n";
+                cout<<"\n\n\n\tYOU HAVE ORDERED  Veggie Supreme "<<endl;
+                cout<<"\t\t\t\t\n\tYOUR ORDER HAS BEEN SAVED SUCCESSFULLY "<<endl;
+                //cout<<"\t :-)"<<endl;
+                break;
+
+            //taking input for exotica
+
+            case 2:
+                cout<<"\n\tHOW MANY Exotica Pizza YOU WANT ?  ";
+                cin>>pizza;
+
+                b=440;
+                s=s+b*pizza;
+                write<<"YOU ORDER  Exotica : 440";
+                write<<" \n";
+                write<<"NUMBER OF Exotica Pizza ARE : "<<pizza;
+                write<<"\n";
+                cout<<"\n\n\n\tYOU HAVE ORDERED  Exotica Pizza "<<endl;
+                cout<<"\t\t\t\t\n\tYOUR ORDER HAS BEEN SAVED SUCCESSFULLY "<<endl;
+                //cout<<"\t :-)"<<endl;
+                break;
+
+            //taking input for sizzler
+
+            case 3:
+                cout<<"\n\tHOW MANY CHICKEN SIZZLER YOU WANT ?  ";
+                cin>>pizza;
+
+                c=580;
+                s=s+c*pizza;
+                write<<"YOU ORDER  Chicken Sizzler : 580";
+                write<<" \n";
+                write<<"NUMBER OF Chicken Sizzler IS : "<<pizza;
+                write<<"\n";
+                cout<<"\n\n\n\tYOU HAVE ORDERED  Chicken Sizzler "<<endl;
+                cout<<"\t\t\t\t\n\tYOUR ORDER HAS BEEN SAVED SUCCESSFULLY "<<endl;
+                //cout<<"\t :-)"<<endl;
+                break;
+
+            //taking input for chicken
+
+            case 4:
+                cout<<"\n\tHOW MANY CHRISPY CHICKEN YOU WANT ?  ";
+                cin>>pizza;
+
+                d=520;
+                s=s+d*pizza;
+                write<<"YOU ORDER  Chrispy Chicken : 520";
+                write<<" \n";
+                write<<"NUMBER OF Chrispy Chicken IS : "<<pizza;
+                write<<"\n";
+                cout<<"\n\n\n\tYOU HAVE ORDERED  Chrispy Chicken "<<endl;
+                cout<<"\t\t\t\t\n\tYOUR ORDER HAS BEEN SAVED SUCCESSFULLY "<<endl;
+                //cout<<"\t :-)"<<endl;
+                break;
+
+            // taking input for spaghetti pizza
+
+            case 5:
+                cout<<"\n\tHOW MANY SPHAGHETTI YOU WANT?  ";
+                cin>>pizza;
+
+                e=350;
+                s=s+e*pizza;
+                write<<"YOU ORDER  Sphaghetti : 350";
+                write<<" \n";
+                write<<"NUMBER OF Sphaghetti IS : "<<pizza;
+                write<<"\n";
+                cout<<"\n\n\n\tYOU HAVE ORDERED  Sphaghetti "<<endl;
+                cout<<"\t\t\t\t\n\tYOUR ORDER HAS BEEN SAVED SUCCESSFULLY "<<endl;
+                //cout<<"\t :-)"<<endl;
+                break;
+
+            //taking input for country feast
+
+            case 6:
+                cout<<"\n\tHOW MANY Country Feast YOU WANT?  ";
+                cin>>pizza;
+
+                f=400;
+                s=s+f*pizza;
+                write<<"YOU ORDER Country Feast : 400";
+                write<<"\n ";
+                write<<"NUMBER OF Country feast IS : "<<pizza;
+                write<<"\n";
+                cout<<"\n\n\n\tYOU HAVE ORDERED Country Feast "<<endl;
+                cout<<"\t\t\t\t\n\tYOUR ORDER HAS BEEN SAVED SUCCESSFULLY "<<endl;
+                //cout<<"\t :-)"<<endl;
+                break;
+
+            //taking input for tetrazzini
+
+            case 7:
+                cout<<"\n\tHOW MANY TETRAZZINI YOU WANT?  ";
+                cin>>pizza;
+
+                g=420;
+                s=s+g*pizza;
+                write<<"YOU ORDER Tetrazzini : 420";
+                write<<"\n ";
+                write<<"NUMBER OF Tetrazzini IS : "<<pizza;
+                write<<"\n";
+                cout<<"\n\n\n\tYOU HAVE ORDERED  Tetrazzini "<<endl;
+                cout<<"\t\t\t\t\n\tYOUR ORDER HAS BEEN SAVED SUCCESSFULLY "<<endl;
+                //cout<<"\t :-)"<<endl;
+                break;
+
+            //taking order for double cheese pizza
+
+            case 8:
+                cout<<"\n\tHOW MANY PIZZA YOU WANT?  ";
+                cin>>pizza;
+
+                h=540;
+                s=s+h*pizza;
+                write<<"YOU ORDER Double Cheese : 540";
+                write<<" \n";
+                write<<"NUMBER OF PIZZA IS : "<<pizza;
+                write<<"\n";
+                cout<<"\n\n\n\tYOU HAVE ORDERED   Double Cheese "<<endl;
+                cout<<"\t\t\t\t\n\tYOUR ORDER HAS BEEN SAVED SUCCESSFULLY "<<endl;
+                //cout<<"\t :-)"<<endl;
+                break;
+
+            //taking input for makizushi
+
+            case 9:
+                cout<<"\n\tHOW MANY MAKIZUSHI YOU WANT?  ";
+                cin>>pizza;
+
+                i=548;
+                s=s+i*pizza;
+                write<<"YOU ORDER Makizushi : 548";
+                write<<" \n";
+                write<<"NUMBER OF Makizushi IS : "<<pizza;
+                write<<"\n";
+                cout<<"\n\n\n\tYOU HAVE ORDERED Makizushi "<<endl;
+                cout<<"\t\t\t\t\n\tYOUR ORDER HAS BEEN SAVED SUCCESSFULLY "<<endl;
+                //cout<<"\t :-)"<<endl;
+                break;
+
+            //taking input for ham burger
+
+            case 10:
+                cout<<"\n\tHOW MANY HAM BURGER YOU WANT?  ";
+                cin>>pizza;
+
+                j=390;
+                s=s+j*pizza;
+                write<<"YOU ORDER Ham Burger : 390";
+                write<<" \n";
+                write<<"NUMBER OF Ham Burger IS : "<<pizza;
+                write<<"\n";
+                cout<<"\n\n\n\tYOU HAVE ORDERED Ham Burger "<<endl;
+                cout<<"\t\t\t\t\n\tYOUR ORDER HAS BEEN SAVED SUCCESSFULLY "<<endl;
+                //cout<<"\t :-)"<<endl;
+                break;
+
+            //taking input for Margherita
+
+            case 11:
+                cout<<"\n\tHOW MANY PIZZA YOU WANT?  ";
+                cin>>pizza;
+
+                k=525;
+                s=s+k*pizza;
+                write<<"YOU ORDER Margherita : 525";
+                write<<" \n";
+                write<<"NUMBER OF PIZZA IS : "<<pizza;
+                write<<"\n";
+                cout<<"\n\n\n\tYOU HAVE ORDERED   Margherita "<<endl;
+                cout<<"\t\t\t\t\n\tYOUR ORDER HAS BEEN SAVED SUCCESSFULLY "<<endl;
+                //cout<<"\t :-)"<<endl;
+                break;
+
+            //taking order for fish
+
+            case 12:
+                cout<<"\n\tHOW MANY FISH 'n' CHIPS YOU WANT?  ";
+                cin>>pizza;
+
+                l=425;
+                s=s+l*pizza;
+                write<<"YOU ORDER Fish 'n' Chips : 425";
+                write<<" \n";
+                write<<"NUMBER OF Fish 'n' Chips IS : "<<pizza;
+                write<<"\n";
+                cout<<"\n\n\n\tYOU HAVE ORDERED  Fish 'n' Chips "<<endl;
+                cout<<"\t\t\t\t\n\tYOUR ORDER HAS BEEN SAVED SUCCESSFULLY "<<endl;
+                //cout<<"\t :-)"<<endl;
+                break;
+
+            //taking order for fajitas
+
+            case 13:
+                cout<<"\n\tHOW MANY FAJITAS YOU WANT?  ";
+                cin>>pizza;
+
+                m=335;
+                s=s+m*pizza;
+                write<<"YOU ORDER  Fajitas  : 335";
+                write<<" \n";
+                write<<"NUMBER OF Fajitas IS : "<<pizza;
+                write<<"\n";
+                cout<<"\n\n\n\tYOU HAVE ORDERED Fajitas "<<endl;
+                cout<<"\t\t\t\t\n\tYOUR ORDER HAS BEEN SAVED SUCCESSFULLY "<<endl;
+                //cout<<"\t :-)"<<endl;
+                break;
+
+            //taking order for tempura
+
+            case 14:
+                cout<<"\n\tHOW MANY TEMPURA YOU WANT?  ";
+                cin>>pizza;
+
+                n=324;
+                s=s+n*pizza;
+                write<<"YOU ORDER Tempura : 324";
+                write<<" \n";
+                write<<"NUMBER OF Tempura IS : "<<pizza;
+                write<<"\n";
+                cout<<"\n\n\n\tYOU HAVE ORDERED  Tempura "<<endl;
+                cout<<"\t\t\t\t\n\tYOUR ORDER HAS BEEN SAVED SUCCESSFULLY "<<endl;
+                //cout<<"\t :-)"<<endl;
+                break;
+
+            //taking order for hot dog
+
+            case 15:
+                cout<<"\n\tHOW MANY HOT DOGS YOU WANT?  ";
+                cin>>pizza;
+
+                o=360;
+                s=s+o*pizza;
+
+                //fn1353
+
+                write<<"YOU ORDER  Hot Dog : 360";
+                write<<"\n ";
+                write<<"NUMBER OF Hot Dog IS : "<<pizza;
+                write<<"\n";
+                cout<<"\n\n\n\tYOU HAVE ORDERED  Hot Dog "<<endl;
+                cout<<"\t\t\t\t\n\tYOUR ORDER HAS BEEN SAVED SUCCESSFULLY "<<endl;
+                //cout<<"\t :-)"<<endl;
+                break;
+
+            case 16:
+                cout<<"\n\t\t\tTHANK YOU"<<endl;
+                cout<<"\n\t ";
+                system("pause");
+                system("cls");
+                exit(0);
+                break;
+
+            default:
+                cout<<"\n\n\t\tYOU HAVE ENTERED WRONG ORDER KEY !!!!! "<<endl;
+                cout<<"\n\n\t\t PLEASE RE-ENTER !!"<<endl;
+                goto c;
+                break;
+            }
+        }
+        
+            cout<<"\n\tDO YOU WANT ANOTHER ORDER (yes/no) : ";
+            cin>>y;
+            if(y=="yes"|| y=="YES")
+            {
+                goto a;
+            }
+            if(y=="no" || y=="NO")
+            {
+                cout<<"\n\tTHANK YOU FOR ORDERING "<<endl;
+                cout<<"\n\tHAVE A GREAT DAY !!"<<endl;
+                cout<<"\n\n\tGENERATING YOUR TOTAL BILL ";
+                for(int a=1; a<5; a++)
+
+                    // Change 'a<?' to how many * you want
+
+                {
+                    sleep(1);
+                    cout << "..";
+                }
+                cout<<"\n\t\t\t\t\t\t\t";
+                
+            }
+        }
+        system("cls");
+
+         
+        cout << "\n\t\t\t\t\t\t\t__________________________________________________"<<endl;
+        cout << "\t\t\t\t\t\t\t|               FOOD ORDERING SYSTEM             |"<<endl;
+        cout << "\t\t\t\t\t\t\t|________________________________________________|"<<endl;
+        cout <<"\t\t\t\t\t\t\t|\t\t\t\t\t\t |"<< endl;
+        cout <<"\t\t\t\t\t\t\t|\t\t\t\t\t\t |"<< endl;
+
+        cout << "\t\t\t\t\t\t\t| BILL NO: "<<rand()<<"            ORDER : "<<rand()<<"         |"<<endl;
+        cout <<"\t\t\t\t\t\t\t|\t\t\t\t\t\t |"<< endl;
+        cout <<"\t\t\t\t\t\t\t|\t\t\t\t\t\t |"<< endl;
+        cout<<"\t\t\t\t\t\t\t| YOUR TOTAL BILL IS Rs. "<<s<<"\t\t\t |"<<endl;
+        write<<"|\t\t\t\t\t\t\t |";
+        write<<"|\t\t\t\t\t\t\tTOTAL BILL IS : "<<s<<"|";
+        cout << "\t\t\t\t\t\t\t|________________________________________________|"<<endl;
+
+
+        write.close();
+        return s;
+    }
+    
+    int show1()
+    {
+        menu1();
+        int s = menu2();
+        return s;
+    }
+
+};
+
+class three:public one,public two
+{
+public:
+    int total()
+    {
+        int s;
+
+
+        //for user id of administrator
+
+d:
+        long userId;
+
+        cout<<"\n\n\tENTER LOGIN ID FOR SECURITY REASONS: ";
+woo:
+        cin>>userId;
+
+        //once user has started using application the screen will print for entering user id
+        //once user has entered the user id it will be checked in if condition
+        //if condition is failed it will call goto function and goto d and will ask user to enter correct ID
+
+
+        if(userId!=12345)
+        {
+            cout<<"\tSORRY, WRONG LOGIN ID ENTERED\n\n";
+            cout<<"\tRE-ENTER CORRECT LOGIN ID : ";
+            goto woo;
+        }
+        else
+            cout<<"\n\n\tACCESS GRANTED SUCCESSFULLY !!\n";
+z:
+        string pwd="password";
+
+        //password
+
+         string pass="";
+         cout<<"\tENTER THE PASSWORD : ";
+         cin>>pass;
+
+        {
+
+            if(pwd==pass)
+
+
+            {
+                cout<<"\n\n\n\tPASSWORD MATCHED SUCCESSFULLY !!\n\n\t";
+                system("PAUSE");
+                system("CLS");
+                s = show1();
+                return s;
+            }
+
+            else
+
+            {
+                cout<<"\n\tSORRY, WRONG PASSWORD ENTERED\n\n";
+                goto z;
+            }
+        }
+    }
+};
+int order()
+{
+    // initializing object for the class three
+
+    three ob;
+
+    // calling for total function ob
+
+    int s = ob.total();
+    cout<<endl;
+    return s;
+}
