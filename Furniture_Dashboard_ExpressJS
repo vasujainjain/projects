@@ -1,0 +1,44 @@
+const express = require("express");
+const cors = require("cors");
+const app = express();
+app.use(cors());
+app.use(express.json());
+
+let currentLocation = { city: "Lucknow", pincode: "226005" };
+
+// GET location
+app.get("/api/location", (req, res) => {
+  res.json(currentLocation);
+});
+
+// POST to update location
+app.post("/api/location", (req, res) => {
+  const { city, pincode } = req.body;
+  currentLocation = { city, pincode };
+  res.json({ message: "Location updated", location: currentLocation });
+});
+
+
+
+let currentLanguage = "EN"; // Default language
+
+// GET current language
+app.get("/api/language", (req, res) => {
+  res.json({ language: currentLanguage });
+});
+
+// POST to update language
+app.post("/api/language", (req, res) => {
+  const { language } = req.body;
+  if (language) {
+    currentLanguage = language;
+    res.json({ message: "Language updated", language: currentLanguage });
+  } else {
+    res.status(400).json({ error: "Language not provided" });
+  }
+});
+
+const PORT = 3000;
+app.listen(PORT, () => {
+  console.log(`Server running at http://localhost:${PORT}`);
+});
